@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avantika's Master Plan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#fff7fb,#ffe7f1);
+color:#4a2a3a;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.hero{
+text-align:center;
+padding:60px 20px;
+}
+
+.tag{
+font-size:1.1rem;
+font-weight:600;
+color:#800020;
+margin-bottom:12px;
+}
+
+.hero h1{
+font-size:3rem;
+font-weight:700;
+color:#d63384;
+margin:0;
+letter-spacing:-1px;
+}
+
+.card{
+background:white;
+border-radius:24px;
+padding:20px;
+margin:18px 0;
+box-shadow:0 10px 30px rgba(214,51,132,.12);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+}
+
+.stat{
+text-align:center;
+background:#fff7fb;
+padding:15px;
+border-radius:18px;
+}
+
+.stat h3{
+margin:0;
+font-size:2rem;
+color:#d63384;
+}
+
+input{
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-right:8px;
+margin-bottom:10px;
+}
+
+button{
+padding:12px 16px;
+border:none;
+border-radius:12px;
+background:#d63384;
+color:white;
+cursor:pointer;
+font-weight:600;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.goal{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#fff7fb;
+padding:12px;
+border-radius:12px;
+margin:8px 0;
+}
+
+.footer{
+text-align:center;
+padding:30px;
+font-size:.9rem;
+color:#777;
+}
+
+#count{
+margin-top:15px;
+font-weight:600;
+color:#800020;
+}
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:2.2rem;
+}
+
+input{
+width:100%;
+margin-right:0;
+}
+
+button{
+width:100%;
+margin-top:5px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+<div class="tag">✨ We pretty, We rich ✨</div>
+<h1>Avantika's Master Plan</h1>
+</div>
+
+<div class="card">
+<h2>📊 Dream Life Progress</h2>
+
+<div class="grid">
+
+<div class="stat">
+<h3 id="total">0</h3>
+<p>Total Goals</p>
+</div>
+
+<div class="stat">
+<h3 id="done">0</h3>
+<p>Completed Goals</p>
+</div>
+
+<div class="stat">
+<h3 id="pct">0%</h3>
+<p>Progress</p>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<h2>⏳ Dream Countdown</h2>
+
+<input id="ev" placeholder="Event Name">
+
+<input id="dt" type="date">
+
+<button onclick="saveCountdown()">Save Countdown</button>
+
+<p id="count"></p>
+
+</div>
+
+<div class="card">
+
+<h2>🌸 Goals</h2>
+
+<input id="goalText" placeholder="Add a new goal">
+
+<button onclick="addGoal()">Add Goal</button>
+
+<div id="goals"></div>
+
+</div>
+
+<div class="footer">
+Made with ❤️ by Albyy
+</div>
+
+</div>
+
+<script>
+
+let goals =
+JSON.parse(localStorage.getItem('av_goals')) || [];
+
+function render(){
+
+let g =
+document.getElementById('goals');
+
+g.innerHTML = '';
+
+goals.forEach((goal,index)=>{
+
+g.innerHTML += `
+<div class="goal">
+
+<span>${goal.text}</span>
+
+<div>
+
+<input
+type="checkbox"
+${goal.done ? 'checked' : ''}
+onchange="toggle(${index})">
+
+<button onclick="delGoal(${index})">
+🗑️
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+let completed =
+goals.filter(g=>g.done).length;
+
+let totalGoals =
+goals.length;
+
+let percent =
+totalGoals
+? Math.round((completed/totalGoals)*100)
+: 0;
+
+document.getElementById('total').innerText =
+totalGoals;
+
+document.getElementById('done').innerText =
+completed;
+
+document.getElementById('pct').innerText =
+percent + '%';
+
+localStorage.setItem(
+'av_goals',
+JSON.stringify(goals)
+);
+
+}
+
+function addGoal(){
+
+let value =
+document.getElementById('goalText')
+.value
+.trim();
+
+if(!value) return;
+
+goals.push({
+text:value,
+done:false
+});
+
+document.getElementById('goalText')
+.value='';
+
+render();
+
+}
+
+function toggle(index){
+
+goals[index].done =
+!goals[index].done;
+
+render();
+
+}
+
+function delGoal(index){
+
+goals.splice(index,1);
+
+render();
+
+}
+
+function saveCountdown(){
+
+localStorage.setItem(
+'ev',
+document.getElementById('ev').value
+);
+
+localStorage.setItem(
+'dt',
+document.getElementById('dt').value
+);
+
+updateCountdown();
+
+}
+
+function updateCountdown(){
+
+document.getElementById('ev').value =
+localStorage.getItem('ev') || '';
+
+document.getElementById('dt').value =
+localStorage.getItem('dt') || '';
+
+if(document.getElementById('dt').value){
+
+let days =
+Math.ceil(
+(
+new Date(
+document.getElementById('dt').value
+)
+-
+new Date()
+)
+/
+86400000
+);
+
+document.getElementById('count')
+.innerText =
+`${document.getElementById('ev').value}: ${days} days remaining ✨`;
+
+}
+
+}
+
+updateCountdown();
+render();
+
+</script>
+
+</body>
+  </html>
