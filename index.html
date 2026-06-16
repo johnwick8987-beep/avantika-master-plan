@@ -178,17 +178,40 @@ margin-top:5px;
 </div>
 
 <div class="card">
+<h2>✈️ Travel Goals</h2>
 
-<h2>🌸 Goals</h2>
+<input id="travelInput" placeholder="Add a travel goal">
+<button onclick="addTravelGoal()">Add</button>
 
-<input id="goalText" placeholder="Add a new goal">
-
-<button onclick="addGoal()">Add Goal</button>
-
-<div id="goals"></div>
-
+<div id="travelGoals"></div>
 </div>
 
+<div class="card">
+<h2>💼 Career Goals</h2>
+
+<input id="careerInput" placeholder="Add a career goal">
+<button onclick="addCareerGoal()">Add</button>
+
+<div id="careerGoals"></div>
+</div>
+
+<div class="card">
+<h2>💪 Fitness Goals</h2>
+
+<input id="fitnessInput" placeholder="Add a fitness goal">
+<button onclick="addFitnessGoal()">Add</button>
+
+<div id="fitnessGoals"></div>
+</div>
+
+<div class="card">
+<h2>📚 Books To Read</h2>
+
+<input id="bookInput" placeholder="Add a book">
+<button onclick="addBookGoal()">Add</button>
+
+<div id="bookGoals"></div>
+</div>
 <div class="footer">
 ✨ Keep dreaming. Keep growing. ✨
 </div>
@@ -196,106 +219,6 @@ margin-top:5px;
 </div>
 
 <script>
-
-let goals =
-JSON.parse(localStorage.getItem('av_goals')) || [];
-
-function render(){
-
-let g =
-document.getElementById('goals');
-
-g.innerHTML = '';
-
-goals.forEach((goal,index)=>{
-
-g.innerHTML += `
-<div class="goal">
-
-<span>${goal.text}</span>
-
-<div>
-
-<input
-type="checkbox"
-${goal.done ? 'checked' : ''}
-onchange="toggle(${index})">
-
-<button onclick="delGoal(${index})">
-🗑️
-</button>
-
-</div>
-
-</div>
-`;
-
-});
-
-let completed =
-goals.filter(g=>g.done).length;
-
-let totalGoals =
-goals.length;
-
-let percent =
-totalGoals
-? Math.round((completed/totalGoals)*100)
-: 0;
-
-document.getElementById('total').innerText =
-totalGoals;
-
-document.getElementById('done').innerText =
-completed;
-
-document.getElementById('pct').innerText =
-percent + '%';
-
-localStorage.setItem(
-'av_goals',
-JSON.stringify(goals)
-);
-
-}
-
-function addGoal(){
-
-let value =
-document.getElementById('goalText')
-.value
-.trim();
-
-if(!value) return;
-
-goals.push({
-text:value,
-done:false
-});
-
-document.getElementById('goalText')
-.value='';
-
-render();
-
-}
-
-function toggle(index){
-
-goals[index].done =
-!goals[index].done;
-
-render();
-
-}
-
-function delGoal(index){
-
-goals.splice(index,1);
-
-render();
-
-}
 
 function saveCountdown(){
 
@@ -308,7 +231,6 @@ localStorage.setItem(
 'dt',
 document.getElementById('dt').value
 );
-
 updateCountdown();
 
 }
@@ -343,9 +265,231 @@ document.getElementById('count')
 }
 
 }
+let travelGoals =
+JSON.parse(localStorage.getItem('travelGoals')) || [];
 
+let careerGoals =
+JSON.parse(localStorage.getItem('careerGoals')) || [];
+
+let fitnessGoals =
+JSON.parse(localStorage.getItem('fitnessGoals')) || [];
+
+let bookGoals =
+JSON.parse(localStorage.getItem('bookGoals')) || [];
+
+function renderCategory(list,id){
+
+let html='';
+
+list.forEach((goal,index)=>{
+
+html += `
+<div class="goal">
+
+<span>${goal.text}</span>
+
+<div>
+
+<input
+type="checkbox"
+${goal.done ? 'checked' : ''}
+onchange="toggleCategory('${id}',${index})">
+
+</div>
+
+</div>
+`;
+
+});
+
+document.getElementById(id).innerHTML = html;
+
+}
+
+function addTravelGoal(){
+
+let value =
+document.getElementById('travelInput').value.trim();
+
+if(!value) return;
+
+travelGoals.push({
+text:value,
+done:false
+});
+
+localStorage.setItem(
+'travelGoals',
+JSON.stringify(travelGoals)
+);
+
+document.getElementById('travelInput').value='';
+
+renderAll();
+
+}
+
+function addCareerGoal(){
+
+let value =
+document.getElementById('careerInput').value.trim();
+
+if(!value) return;
+
+careerGoals.push({
+text:value,
+done:false
+});
+
+localStorage.setItem(
+'careerGoals',
+JSON.stringify(careerGoals)
+);
+
+document.getElementById('careerInput').value='';
+
+renderAll();
+
+}
+
+function addFitnessGoal(){
+
+let value =
+document.getElementById('fitnessInput').value.trim();
+
+if(!value) return;
+
+fitnessGoals.push({
+text:value,
+done:false
+});
+
+localStorage.setItem(
+'fitnessGoals',
+JSON.stringify(fitnessGoals)
+);
+
+document.getElementById('fitnessInput').value='';
+
+renderAll();
+
+}
+
+function addBookGoal(){
+
+let value =
+document.getElementById('bookInput').value.trim();
+
+if(!value) return;
+
+bookGoals.push({
+text:value,
+done:false
+});
+
+localStorage.setItem(
+'bookGoals',
+JSON.stringify(bookGoals)
+);
+
+document.getElementById('bookInput').value='';
+
+renderAll();
+
+}
+
+function renderAll(){
+
+renderCategory(
+travelGoals,
+'travelGoals'
+);
+
+renderCategory(
+careerGoals,
+'careerGoals'
+);
+
+renderCategory(
+fitnessGoals,
+'fitnessGoals'
+);
+
+renderCategory(
+bookGoals,
+'bookGoals'
+);
+
+updateProgress();
+
+}
+  function updateProgress(){
+
+let totalGoals =
+travelGoals.length +
+careerGoals.length +
+fitnessGoals.length +
+bookGoals.length;
+
+let completedGoals =
+
+travelGoals.filter(g=>g.done).length +
+
+careerGoals.filter(g=>g.done).length +
+
+fitnessGoals.filter(g=>g.done).length +
+
+bookGoals.filter(g=>g.done).length;
+
+let percent =
+
+totalGoals
+
+? Math.round((completedGoals/totalGoals)*100)
+
+: 0;
+
+document.getElementById('total').innerText =
+totalGoals;
+
+document.getElementById('done').innerText =
+completedGoals;
+
+document.getElementById('pct').innerText =
+percent + '%';
+
+  }
+  function toggleCategory(id,index){
+
+let list;
+
+if(id === 'travelGoals'){
+list = travelGoals;
+}
+else if(id === 'careerGoals'){
+list = careerGoals;
+}
+else if(id === 'fitnessGoals'){
+list = fitnessGoals;
+}
+else{
+list = bookGoals;
+}
+
+list[index].done = !list[index].done;
+
+localStorage.setItem(
+id,
+JSON.stringify(list)
+);
+
+updateProgress();
+
+renderAll();
+
+  }
 updateCountdown();
-render();
+renderAll();
 
 </script>
 
