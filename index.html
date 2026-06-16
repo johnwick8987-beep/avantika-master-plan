@@ -277,7 +277,7 @@ JSON.parse(localStorage.getItem('fitnessGoals')) || [];
 let bookGoals =
 JSON.parse(localStorage.getItem('bookGoals')) || [];
 
-function renderCategory(list,id){
+  function renderCategory(list,id){
 
 let html='';
 
@@ -294,6 +294,10 @@ html += `
 type="checkbox"
 ${goal.done ? 'checked' : ''}
 onchange="toggleCategory('${id}',${index})">
+
+<button onclick="deleteCategoryGoal('${id}',${index})">
+🗑️
+</button>
 
 </div>
 
@@ -488,6 +492,35 @@ updateProgress();
 renderAll();
 
   }
+  function deleteCategoryGoal(id,index){
+
+let list;
+
+if(id === 'travelGoals'){
+list = travelGoals;
+}
+else if(id === 'careerGoals'){
+list = careerGoals;
+}
+else if(id === 'fitnessGoals'){
+list = fitnessGoals;
+}
+else{
+list = bookGoals;
+}
+
+list.splice(index,1);
+
+localStorage.setItem(
+id,
+JSON.stringify(list)
+);
+
+updateProgress();
+renderAll();
+
+}
+  
 updateCountdown();
 renderAll();
 
